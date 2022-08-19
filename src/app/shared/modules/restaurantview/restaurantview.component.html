@@ -1,0 +1,235 @@
+<div *ngIf="showRestaurant ">
+    <div class="card" *ngIf="isAdmin">
+        <div class="card-body">
+            <div class="row">
+
+                <div class="col-sm-3 change-owner" *ngIf="isAdmin">
+                    <div class="form-check form-check-inline">
+                        <p class="form-check-label" for="inlineCheckbox1">Claimed</p>
+                        <ui-switch [checked]="claimedcheck" defaultBgColor="red" [disabled]="!isAdmin"
+                            (change)="changeClaimStatus($event)"></ui-switch>
+                    </div>
+                    <div class="form-group col-sm-6 pl-0">
+                        <label><b>Change Owner</b></label>
+                        <select class="form-control" [(ngModel)]="resowner">
+                            <option value={{item.id}} *ngFor="let item of ownerlist">
+                                {{item.name}}</option>
+                        </select>
+                    </div>
+                    <div class=" " *ngIf="isAdmin">
+                        <button class="btn btn-primary btn-sm" (click)="changeOwner()">Change Owner</button>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p>Kiosk, POS</p>
+                            <ui-switch [checked]="editAllow.pos" defaultBgColor="red" [disabled]="!isAdmin"
+                                (change)="changePosStatus($event)"></ui-switch>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>menu edit</p>
+                            <ui-switch [checked]="editAllow.menu" defaultBgColor="red" [disabled]="!isAdmin"
+                                (change)="changemenuStatus($event)"></ui-switch>
+                        </div>
+                        <div class="col-sm-3">
+                            <p for=""> Reservation Edit</p>
+                            <ui-switch [checked]="editAllow.reservation" defaultBgColor="red" [disabled]="!isAdmin"
+                                (change)="changeReservationStatus($event)"></ui-switch>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>Order Edit</p>
+                            <ui-switch [checked]="editAllow.order" defaultBgColor="red" [disabled]="!isAdmin"
+                                (change)="changeOrderEditStatus($event)"></ui-switch>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>Discount Edit</p>
+                            <ui-switch [checked]="editAllow.Discount" defaultBgColor="red" [disabled]="!isAdmin"
+                                (change)="changediscountEditStatus($event)"></ui-switch>
+                        </div>
+                        <button class="btn btn-success btn-sm pull-right" (click)="changePermission()" style="margin: auto">Change
+                            Permission</button>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="text">Stripe Account*</label>
+                        <input type="text" class="form-control input-underline input-lg" id="stripe_acc"
+                            [(ngModel)]="stripe_acc" placeholder="{{ 'Stripe Account'  }}" maxlength="60" />
+                    </div>
+                    <button class="btn btn-primary" (click)="SubmitStripe()"> Submit </button>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="text">ATH Public*</label>
+                        <input type="text" class="form-control input-underline input-lg" id="ath_acc"
+                            [(ngModel)]="ath_acc" placeholder="{{ 'ATH Public'  }}" maxlength="60" />
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="text">ATH Secret*</label>
+                        <input type="text" class="form-control input-underline input-lg" id="ath_secret"
+                            [(ngModel)]="ath_secret" placeholder="{{ 'ATH Secret'  }}" maxlength="60" />
+                    </div>
+                    <button class="btn btn-primary" (click)="SubmitAth()" style="float: right;"> Submit </button>
+                </div>
+                <div class="col-sm-6">
+                    <label for="text">Stripe Fee</label>
+                    <div class="row">
+                        <div class="col-sm-3" style="display: flex;">
+                            <label>5%</label>
+                            <ui-switch [checked]="isFive" defaultBgColor="red" [disabled]="!isAdmin"
+                                (change)="changeStripeFee($event, 5)"></ui-switch>
+                        </div>
+                        <div class="col-sm-3" style="display: flex;">
+                            <label for="">10%</label>
+                            <ui-switch [checked]="isTen" defaultBgColor="red" [disabled]="!isAdmin"
+                                (change)="changeStripeFee($event, 10)"></ui-switch>
+                        </div>
+                        <div class="col-sm-3" style="display: flex;">
+                            <label>15%</label>
+                            <ui-switch [checked]="isFifteen" defaultBgColor="red" [disabled]="!isAdmin"
+                                (change)="changeStripeFee($event, 15)"></ui-switch>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" (click)="submitFee()" style="float: right;"> Save Fee </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div style="text-align: right;">
+        Store ID: {{restaurantId}}
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <h4>Restaurant Pic</h4>
+            <img class="restaurantpic" src="{{fileurl+restaurant?.restaurantpic}}" width="100%" />
+        </div>
+        <div class="col-sm-8">
+            <h4>Restaurant Details</h4>
+            <div class="row">
+                <div class="col-sm-6">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>Name</th>
+                                <td>{{restaurant?.restaurant_name}}<span class="unclaimed-link ml-1"
+                                        *ngIf="restaurant?.claimed == 0"><i
+                                            class="fa fa-question-circle text-secondary"></i></span><span
+                                        class="unclaimed-link ml-1" *ngIf="restaurant?.claimed == 1"><i
+                                            class="fa fa-check-circle text-success"></i></span></td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td>{{restaurant?.status ? 'active' : 'inactive'}}</td>
+                            </tr>
+                            <tr>
+                                <th>Category Name</th>
+                                <td>{{restaurant?.category_name}}</td>
+                            </tr>
+                            <tr>
+                                <th>Subcategories</th>
+                                <td>{{restaurant?.subcat_name}}</td>
+                            </tr>
+                            <tr>
+                                <th>City</th>
+                                <td>{{restaurant?.city}}</td>
+                            </tr>
+                            <tr>
+                                <th>Address</th>
+                                <td>{{restaurant?.address}}</td>
+                            </tr>
+                            <tr>
+                                <th>Contact No.</th>
+                                <td>{{restaurant?.contact}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-sm-6">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>Description</th>
+                                <td>{{restaurant?.description}}</td>
+                            </tr>
+                            <tr>
+                                <th>Description ES</th>
+                                <td>{{restaurant?.description_es}}</td>
+                            </tr>
+                            <tr>
+                                <th>Average Cost (Per Person)</th>
+                                <td>{{restaurant?.avg_cost | currency}}</td>
+                            </tr>
+                            <tr>
+                                <th>Rating</th>
+                                <td>{{restaurant?.rating?.toFixed(2)}}</td>
+                            </tr>
+                            <tr>
+                                <th>Website Link</th>
+                                <td>{{restaurant?.website}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <h4> Location </h4>
+            <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom">
+                <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+            </agm-map>
+        </div>
+        <div class="col-sm-6">
+            <h4> Opening & Closing Time </h4>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>Day</td>
+                        <td>Opening Time</td>
+                        <td>Closing Time</td>
+                    </tr>
+                    <tr>
+                        <td>Monday</td>
+                        <td>{{res_time?.monopen_time | timeformateChange}}</td>
+                        <td>{{res_time?.monclose_time | timeformateChange}}</td>
+                    </tr>
+                    <tr>
+                        <td>Tuesday</td>
+                        <td>{{res_time?.tueopen_time | timeformateChange}}</td>
+                        <td>{{res_time?.tueclose_time | timeformateChange}}</td>
+                    </tr>
+                    <tr>
+                        <td>Wednesday</td>
+                        <td>{{res_time?.wedopen_time | timeformateChange}}</td>
+                        <td>{{res_time?.wedclose_time | timeformateChange}}</td>
+                    </tr>
+                    <tr>
+                        <td>Thursday</td>
+                        <td>{{res_time?.thuopen_time | timeformateChange}}</td>
+                        <td>{{res_time?.thuclose_time | timeformateChange}}</td>
+                    </tr>
+                    <tr>
+                        <td>Friday</td>
+                        <td>{{res_time?.friopen_time | timeformateChange}}</td>
+                        <td>{{res_time?.friclose_time | timeformateChange}}</td>
+                    </tr>
+                    <tr>
+                        <td>Saturday</td>
+                        <td>{{res_time?.satopen_time | timeformateChange}}</td>
+                        <td>{{res_time?.satclose_time | timeformateChange}}</td>
+                    </tr>
+                    <tr>
+                        <td>Sunday</td>
+                        <td>{{res_time?.sunopen_time | timeformateChange}}</td>
+                        <td>{{res_time?.sunclose_time | timeformateChange}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

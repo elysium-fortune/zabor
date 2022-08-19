@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    // "paths": {
+    //   "exceljs": [
+    //     "node_modules/exceljs/dist/exceljs.min.js"
+    //   ]
+    // },
+    "outDir": "../out-tsc/app",
+    "types": [
+      "googlemaps"
+    ]
+  },
+  "exclude": [
+    "test.ts",
+    "**/*.spec.ts"
+  ]
+}

@@ -1,0 +1,152 @@
+<div style="text-align: right;">
+  Store ID: {{resId}}
+</div>
+<div class="row">
+  <div class="col col-xs-12">
+    <div class="card mb-3">
+      <div class="card-header">
+        <h4>Orders</h4>
+      </div>
+      <div class="card-body table-responsive">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>Select date Range *</label>
+              <div class="input-group mb-3">
+                <input type="text" opens="right" placeholder="Select Date Range" ngxDaterangepickerMd
+                  [locale]="{applyLabel: 'ok', format: 'DD-MM-YYYY'}" class="form-control" [maxDate]="maxDate"
+                  [(ngModel)]="selected" [showDropdowns]="true" />
+                <div class="input-group-append">
+                  <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"
+                      aria-hidden="true"></i></span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="status">Status*</label>
+              <!-- <angular2-multiselect [data]="statusdata" [(ngModel)]="selectedstatuslist" [settings]="dropdownSettings">
+              </angular2-multiselect> -->
+              <select class="form-control" [(ngModel)]="orderStatus">
+                <option value="-1">Select</option>
+                <option value="received">Order Received</option>
+                <option value="preparing">Preparing</option>
+                <option value="ready">Ready</option>
+                <option value="pickup">Pickup</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="status">Restaurant*</label>
+              <!-- <angular2-multiselect [data]="statusdata" [(ngModel)]="selectedstatuslist" [settings]="dropdownSettings">
+              </angular2-multiselect> -->
+              <select class="form-control" [(ngModel)]="resId">
+                <option value="-1">Select</option>
+                <option value={{item.id}} *ngFor="let item of restaurantList">{{item.name}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <button class="btn btn-primary mr-2" (click)="rerender()">Filter</button>
+              <button class="btn btn-danger mr-2" (click)="resetFilters()">Reset</button>
+              <button class="btn btn-info" (click)="report()">Report</button>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3">
+            <div class="alert alert-primary" role="alert">
+              Order Received {{TypesFilters?.received}}
+            </div>
+          </div>
+          <div class="col-sm-3 ">
+            <div class="alert alert-warning" role="alert">
+              Order Preparing {{TypesFilters?.preparing}}</div>
+          </div>
+          <div class="col-sm-3">
+            <div class=" alert alert-info" role="alert">
+              Order Ready {{TypesFilters?.ready}}
+            </div>
+          </div>
+          <div class="col-sm-3 ">
+            <div class="alert alert-dark" role="alert">
+              Order Pickup {{TypesFilters?.pickup}}
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="alert alert-success">
+              Order Delivered {{TypesFilters?.delivered}}
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="alert alert-danger dark-danger" role="alert">
+              Order Cancelled {{TypesFilters?.cancelled}}
+            </div>
+          </div>
+
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <h3 class="pull-right total-price">Total : <span>{{getOrdersTotal | currency}}</span></h3>
+          </div>
+        </div>
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table-hover table table-bordered">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Order ID</th>
+              <th>User Name</th>
+              <th>Restaurnt </th>
+              <th>Created Date</th>
+              <th>Status</th>
+              <th>Delivery mode</th>
+              <th>Total</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody *ngIf="ordersList.length > 0">
+
+            <tr *ngFor="let order of ordersList; index as i;">
+              <td scope="row">{{ i+1 }}</td>
+              <td>{{order.orderid}}</td>
+              <td>{{order.username}}</td>
+              <td><a routerLink="/owner/restaurants/edit/{{ order.res_id }}"> {{ order.res_name}} </a>
+              </td>
+              <td>{{ order.created_at}}</td>
+              <td>
+
+                <span class="status-td"
+                  [ngClass]="{'dark-danger':order.status==='cancelled','danger':order.status==='paymentfailed','primary':order.status==='received' ,'warning':order.status==='preparing','info':order.status==='ready','dark':order.status==='pickup','success':order.status==='delivered'}">{{order.status | titlecase}}</span>
+
+              </td>
+              <td>{{order.delivery_mode == 1 ? 'Home Delivery' : 'Pickup'}}</td>
+              <td>{{order.order_total|currency}}</td>
+              <td *ngIf="!isAdmin"><a routerLink="/owner/orders/edit/{{ order.orderid}}"
+                  class="btn badge btn-primary btn-sm"><i class="fa fa-pencil"></i> Edit</a></td>
+
+              <td *ngIf="isAdmin"><a routerLink="/admin/orders/detail/{{ order.orderid}}"
+                  class="btn badge btn-primary btn-sm"><i class="fa fa-pencil"></i> Edit</a></td>
+            </tr>
+
+          </tbody>
+          <tbody *ngIf="ordersList.length == 0">
+            <tr>
+              <td class="no-data-available" colspan="8">No matching records found</td>
+            </tr>
+          </tbody>
+        </table>
+
+
+      </div>
+    </div>
+  </div>
+</div>

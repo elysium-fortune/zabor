@@ -1,0 +1,453 @@
+<div class="card">
+  <div class="card-header">
+    <h4>Create Restaurant <button class="btn btn-primary btn-sm pull-right" (click)="openModel()">+ Add Opening
+        time</button></h4>
+
+  </div>
+  <div class="card-body">
+    <div class="login-page">
+      <div class="row justify-content-md-center">
+        <div class="col-md-12">
+
+          <form role="form" (keydown.enter)="$event.preventDefault()" [formGroup]="restaurantForm"
+            (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+            <input type="hidden" name="role">
+            <input type="hidden" name="id">
+
+            <div class="row form-content">
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <label for="name">Full Name*</label>
+                  <input type="text" class="form-control input-underline input-lg" id="name" formControlName="name"
+                    placeholder="{{ 'Full Name'  }}" maxlength="60" />
+
+                  <ng-container *ngIf="!restaurantForm.controls['name'].valid &&
+                    restaurantForm.controls['name'].touched">
+                    <span class="text-danger" *ngIf="restaurantForm.controls['name'].hasError(
+                                                'required'
+                                            ) else elsename
+                                        ">name is required.</span>
+                    <ng-template #elsename>
+                      <span class="text-danger" *ngIf="restaurantForm.controls['name'].hasError(
+                                                'whitespace'
+                                            )
+                                        ">only white space is not allowed.</span></ng-template>
+                  </ng-container>
+
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <label for="status">Status*</label>
+                  <select class="custom-select" id="status" formControlName="status">
+                    <option value="1">Active</option>
+                    <option value="0">Inactive</option>
+                  </select>
+
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <label for="email">Email*</label>
+                  <input type="email" class="form-control input-underline input-lg" id="email" formControlName="email"
+                    placeholder="{{ 'email'  }}" maxlength="60" />
+                  <span class="text-danger" *ngIf="
+                                !restaurantForm.controls['email'].valid &&
+                                restaurantForm.controls['email'].touched &&
+                                restaurantForm.controls['email'].hasError('required')
+                            ">Email is required.</span>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <label for="cod">Allow Cash On delivery*</label>
+                  <select class="custom-select" id="cod" formControlName="cod">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                  </select>
+
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="description">Description EN*</label>
+                  <textarea class="form-control input-underline input-lg" id="description" formControlName="description"
+                    placeholder="{{ 'description'  }}" maxlength="200"></textarea>
+
+                  <ng-container *ngIf="!restaurantForm.controls['description'].valid &&
+                    restaurantForm.controls['description'].touched">
+                    <span class="text-danger" *ngIf="restaurantForm.controls['description'].hasError(
+                                                'required'
+                                            ) else elsedescription
+                                        ">description is required.</span>
+                    <ng-template #elsedescription>
+                      <span class="text-danger" *ngIf="restaurantForm.controls['description'].hasError(
+                                                'whitespace'
+                                            )
+                                        ">only white space is not allowed.</span></ng-template>
+                  </ng-container>
+
+                </div>
+              </div>
+
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="description">Description ES*</label>
+                  <textarea class="form-control input-underline input-lg" id="description"
+                    formControlName="descriptiones" placeholder="{{ 'description'  }}" maxlength="200"></textarea>
+
+                  <ng-container *ngIf="!restaurantForm.controls['description'].valid &&
+                    restaurantForm.controls['description'].touched">
+                    <span class="text-danger" *ngIf="restaurantForm.controls['description'].hasError(
+                                                'required'
+                                            ) else elsedescriptionES
+                                        ">description ES is required.</span>
+                    <ng-template #elsedescriptionES>
+                      <span class="text-danger" *ngIf="restaurantForm.controls['description'].hasError(
+                                                'whitespace'
+                                            )
+                                        ">only white space is not allowed.</span></ng-template>
+                  </ng-container>
+
+                </div>
+              </div>
+
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="address">Full addess*</label>
+                  <textarea class="form-control input-underline input-lg" id="address" formControlName="address"
+                    placeholder="{{ 'address'  }}" maxlength="200"></textarea>
+
+                  <ng-container *ngIf="!restaurantForm.controls['address'].valid &&
+                    restaurantForm.controls['address'].touched">
+                    <span class="text-danger" *ngIf="restaurantForm.controls['address'].hasError(
+                                                'required'
+                                            ) else elseaddress
+                                        ">address is required.</span>
+                    <ng-template #elseaddress>
+                      <span class="text-danger" *ngIf="restaurantForm.controls['address'].hasError(
+                                                'whitespace'
+                                            )
+                                        ">Only whitespace is not allowed.</span></ng-template>
+                  </ng-container>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <label for="category">Category*</label>
+                <select class="custom-select" formControlName="category" (change)="getSubcat()">
+                  <option value="">Select</option>
+                  <ng-container *ngFor="let cat of Categories">
+                    <option value="{{ cat.id }}">{{ cat.name}}</option>
+                  </ng-container>
+                </select>
+              </div>
+
+              <div class="col-sm-3">
+                <label for="subcategory">SubCategory*</label>
+                <angular2-multiselect [data]="subcategories" [(ngModel)]="selectedSubcats" [settings]="dropdownSettings"
+                  formControlName="subcategory">
+                </angular2-multiselect>
+
+              </div>
+
+              <div class="col-sm-3">
+
+                <div class="form-group">
+                  <label>Cancel Charge (%)</label>
+                  <input type="number" class="form-control" formControlName="cancel_charge" id="cancel_charge"
+                    placeholder="Cancel Charge">
+                </div>
+
+              </div>
+
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <label>min order value</label>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="basic-addon1">$</span>
+                    </div>
+                    <input type="number" class="form-control" formControlName="min_order_value" id="min_order_value"
+                      placeholder="min order value">
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <label>max order value</label>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="basic-addon1">$</span>
+                    </div>
+                    <input type="number" class="form-control" formControlName="max_order_value" id="min_order_value"
+                      placeholder="max order value">
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="col-sm-12">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label for="city">City*</label>
+                    <select id="city" formControlName="city" class="form-control">
+                      <option value="">Please select</option>
+                      <option value="{{item}}" *ngFor="let item of cityList">{{item}}</option>
+                    </select>
+                    <ng-container *ngIf="!restaurantForm.controls['city'].valid &&
+                            restaurantForm.controls['city'].touched">
+                      <span class="text-danger" *ngIf="restaurantForm.controls['city'].hasError(
+                                                        'required'
+                                                    ) else elsecity
+                                                ">City is required.</span>
+                      <ng-template #elsecity>
+                        <span class="text-danger" *ngIf="restaurantForm.controls['city'].hasError(
+                                                        'whitespace'
+                                                    )
+                                                ">Only whitespace is not allowed.</span></ng-template>
+                    </ng-container>
+
+                  </div>
+                  <div class="col-sm-3">
+                    <label for="contact">Contact No.*</label>
+                    <input type="text" class="form-control" formControlName="contact" id="contact"
+                      placeholder="contact">
+                    <ng-container *ngIf="!restaurantForm.controls['contact'].valid &&
+                      restaurantForm.controls['contact'].touched">
+                      <span class="text-danger" *ngIf="restaurantForm.controls['contact'].hasError(
+                                                  'required'
+                                              ) else elsecontact
+                                          ">Contact is required.</span>
+                      <ng-template #elsecontact>
+                        <span class="text-danger">Contact is invalid</span></ng-template>
+                    </ng-container>
+                  </div>
+
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label for="website">Website Link</label>
+                      <input type="text" class="form-control" formControlName="website" id="website"
+                        placeholder="Website link">
+                      <ng-container *ngIf="!restaurantForm.controls['website'].valid &&
+                        restaurantForm.controls['website'].touched">
+                        <span class="text-danger" *ngIf="restaurantForm.controls['website'].hasError(
+                                                    'pattern'
+                                                )
+                                            ">invalid Website link</span>
+
+                      </ng-container>
+                    </div>
+                  </div>
+                  <div class="col-sm-2">
+
+                    <div class="form-group">
+                      <label for="avaragecost">Average Cost($)*</label>
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="basic-addon1">$</span>
+                        </div>
+                        <input type="text" class="form-control" formControlName="avaragecost" id="avaragecost"
+                          placeholder="Average Cost">
+                      </div>
+
+                      <ng-container *ngIf="!restaurantForm.controls['avaragecost'].valid &&
+                            restaurantForm.controls['avaragecost'].touched">
+                        <span class="text-danger" *ngIf="restaurantForm.controls['avaragecost'].hasError(
+                                                        'required'
+                                                    )
+                                                else elseavgcost">Average Cost is required</span>
+                        <ng-template #elseavgcost>
+                          <span class="text-danger">Average cost is invalid</span></ng-template>
+
+                      </ng-container>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <div class=" row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Choose your address on Map*</label>
+                  <input placeholder="search for location" autocorrect="off" autocapitalize="off" spellcheck="off"
+                    type="text" class="form-control auto-location" #search [formControl]="searchControl">
+                </div>
+                <agm-map [latitude]="lat" [longitude]="lng" (mapClick)="chooseLocation($event)" [zoom]="zoom">
+                  <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+                </agm-map>
+              </div>
+
+              <div class="col-sm-6">
+                <label>Choose Restaurant Pic</label>
+                <div class="custom-file">
+                  <input type="file" name="restaurantPic" class="custom-file-input" id="restaurantPic"
+                    (change)="fileChangeEvent($event,'restaurantPic')" accept="image/*">
+                  <label class="custom-file-label" for="customFile">Choose file</label>
+                </div>
+                <div *ngIf="showImagecropper" class="col-sm-12">
+                  <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true"
+                    [aspectRatio]="4 / 3" [resizeToWidth]="600" format="png" (imageCropped)="imageCropped($event)"
+                    (imageLoaded)="imageLoaded()" (cropperReady)="cropperReady()" (loadImageFailed)="loadImageFailed()">
+                  </image-cropper>
+
+                  <img [src]="croppedImage" width="100" />
+                </div>
+              </div>
+            </div>
+
+
+
+            <button [disabled]="!restaurantForm.valid" class="btn btn-success mt-5" type="submit">
+              {{ "Create"  }}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="openTimeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+
+      <div class="modal-body">
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+
+
+
+
+
+        <!-- 16:9 aspect ratio -->
+        <form class="" id="openTimeForm" [formGroup]="openTimeForm" (ngSubmit)="submitTimeform()">
+          <div class="row">
+            <div class="col-sm-12">
+              <h6>Fill Opening and closing time (Left Unfilled if Restaurant is closed that day)</h6>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              Monday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="monopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="monclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-primary badge" (click)="copyTiming()">same all day</span><br><span
+                class="btn btn-danger badge" (click)="clearTimining('mon')">clear/closed</span>
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="col-2">
+              Tuesday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="tueopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="tueclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-danger badge" (click)="clearTimining('tue')">clear/closed</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              Wednesday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="wedopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="wedclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-danger badge" (click)="clearTimining('wed')">clear/closed</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              Thursday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="thuopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="thuclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-danger badge" (click)="clearTimining('thu')">clear/closed</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              Friday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="friopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="friclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-danger badge" (click)="clearTimining('fri')">clear/closed</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              Saturday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="satopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="satclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-danger badge" (click)="clearTimining('sat')">clear/closed</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              Sunday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="sunopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="sunclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-danger badge" (click)="clearTimining('sun')">clear/closed</span>
+            </div>
+          </div>
+
+          <div class="col-sm-12">
+            <button [disabled]="!openTimeForm.valid " type="submit" class="btn btn-success">Save</button>
+          </div>
+        </form>
+
+
+      </div>
+
+    </div>
+  </div>
+</div>

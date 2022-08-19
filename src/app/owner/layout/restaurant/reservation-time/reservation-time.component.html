@@ -1,0 +1,89 @@
+<div style="text-align: right;">
+  Store ID: {{res_id}}
+</div>
+<div class="row">
+  <div class="col-sm-6">
+    <div class='app-calendar'>
+      <full-calendar #calendar defaultView="dayGridMonth" [header]="{
+        left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth'
+        }" eventLimit="true" [plugins]="calendarPlugins" (dateClick)="handleDateClick($event)"
+        [validRange]="validRange" [events]="calendarEvents">
+      </full-calendar>
+    </div>
+  </div>
+  <div class="col-sm-6" *ngIf="selectedDate != ''">
+    <div class="card">
+      <div class="card-header">
+        <h3>Timeslot </h3>
+      </div>
+      <div class="card-body">
+        <h3> {{selectedDate}} </h3>
+        <form role="form" [formGroup]="seatForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+          <div formArrayName="options">
+            <div class="row">
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Time *</label>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="form-group">
+                  <label>Available Seat*</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" *ngFor="let ele of  slotsList">
+              <div class="col-4">
+                <div class="form-group">
+                  <label>{{ele.slot_time}}</label>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="form-group">
+                  <label>{{ele.seat}}</label>
+                </div>
+              </div>
+            </div>
+
+            <div *ngFor="let item of Options.controls; let i=index" [formGroupName]="i">
+
+              <div class="row">
+
+
+                <div class="col-4">
+
+                  <div class="form-group">
+
+                    <input type="text" atp-time-picker class="form-control input-underline input-lg"
+                      formControlName="timeslot" placeholder="00:00" maxlength="80" readonly />
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="form-group">
+
+                    <input type="number" class="form-control input-underline input-lg" formControlName="seats"
+                      placeholder="{{ 'Available Seat'  }}" maxlength="25" />
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="btn-div form-group">
+              <button type="button" (click)="addOptions()" class="btn btn-primary btn-sm">+ Add Slots </button>
+            </div>
+          </div>
+          <div class="btn-div">
+            <button class="btn btn-success " type="submit" [disabled]="!seatForm.valid">
+              Save
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

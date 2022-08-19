@@ -1,0 +1,105 @@
+.menu-bx-list-ul > li{
+    width: 100%;
+}
+.price-sec{
+    display: flex;
+}
+
+.menu-bx-list-ul > li a {
+    text-transform: capitalize;
+    color: #000000;
+    font-size: 14px;
+    background-color: #ffffff;
+    -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
+    padding: 0px 20px;
+    border-radius: 5px;
+    font-weight: 500;
+    display: inline-block;
+}
+.gallery-img{
+    bottom: auto;
+    padding: 4px;
+}
+.addItem a{ 
+    color: #000 !important;
+}
+.menu-img{
+    padding: 0px;
+    width: 100%;
+}
+.menu-img:hover {
+    -ms-transform: scale(1.2); /* IE 9 */
+    -webkit-transform: scale(1.2); /* Safari 3-8 */
+    transform: scale(1.2); 
+  }
+.addItem{
+  text-transform: capitalize;
+  color: #000 !important;
+  font-size: 14px;
+  background-color: #fff;
+  box-shadow: 0 0 5px rgba(0,0,0,.15);
+  padding: 0 20px;
+  border-radius: 5px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.item-row{
+    margin-bottom:25px !important;
+    padding: 0 0 25px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.item-row .content p{
+    margin-bottom: 0px;
+    font-size: 17px;
+}
+.item-row .content p::after{
+display: block;
+width: 100%;
+height: 1px;
+content: " ";
+border-bottom: 2px dotted;
+border-color: rgba(0,0,0,.2);
+}
+.item-row  .price-group{
+    text-align: center;
+
+    padding: 0px 10px;
+}
+.item-row  .price-group{  
+    font-weight: 700;
+} 
+.item-row .content span{
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 400;
+    color: #999;
+}
+.item_qua{
+    color: #ce8f00;
+    margin-right: 10px;
+}
+.row.item-row{
+    margin-left: 0px;
+    margin-right: 0px;
+}
+.menu-bx h3{
+     margin-bottom: 40px;
+    //  text-decoration: underline;
+}
+
+input.ng-valid, textarea.ng-valid, select.ng-valid {
+    border: 1px solid #ced4da;
+}
+
+span.item_name{ font-weight:normal; width: 60%;line-height:20px}
+.item-note{ font-size: 14px; font-weight: 700;}
+.cus-li{ font-size: 14px; line-height: 20px;}
+
+.total-ul h5{
+font-size: 14px;
+font-family: monospace;
+font-weight: normal;
+}

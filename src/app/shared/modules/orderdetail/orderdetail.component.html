@@ -1,0 +1,335 @@
+<div class="row" *ngIf="orderDetail?.order_id">
+  <div class="col-lg-9">
+    <div class="row">
+      <div class="col col-xs-12">
+        <div class="card mb-3">
+          <div class="alert"
+            [ngClass]="{'alert-danger':orderDetail?.status==='cancelled' ,'alert-success':orderDetail?.status==='received' ,'alert-warning':orderDetail?.status==='preparing','alert-info':orderDetail?.status==='ready','alert-dark':orderDetail?.status==='pickup','alert-primary':orderDetail?.status==='delivered'}"
+            role="alert">
+            {{'Order Status'| translate}}: <a href="#" class="alert-link">{{orderDetail?.status | titlecase}}</a>
+          </div>
+          <div class="card-body table-responsive">
+            <app-order-progress-bar order_id="{{orderDetail?.order_id}}" delivery_mode="{{orderDetail?.delivery_mode}}"
+              *ngIf="orderDetail?.status != 'cancelled'" #orderProgressbar>
+            </app-order-progress-bar>
+            <div class="container-fluid">
+              <h3>Order #{{orderDetail.order_id}} </h3>
+              <p>{{formatedCreatedDate}}</p>
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <h4>Billing Address</h4>
+                    </div>
+                    <div class="col-sm-6">
+                      <span>First Name</span>
+                      <p>{{orderDetail.firstname}}</p>
+                    </div>
+                    <div class="col-sm-6">
+                      <span>Last Name</span>
+                      <p>{{orderDetail.lastname}}</p>
+                    </div>
+                    <div class="col-sm-6">
+                      <span>Email</span>
+                      <p>{{orderDetail.email}}</p>
+                    </div>
+                    <div class="col-sm-6">
+                      <span>Phone</span>
+                      <p>{{orderDetail.phone}}</p>
+                    </div>
+                    <div class="col-sm-6">
+                      <span>City</span>
+                      <p>{{orderDetail.city}}</p>
+                    </div>
+                    <div class="col-sm-6">
+                      <span>Address</span>
+                      <p>{{orderDetail.houseno}}</p>
+                      <p>{{orderDetail.address}}</p>
+                    </div>
+
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <h4>Rastaurat Details</h4>
+                  <p>Name:- <a [routerLink]="restaurantUrl">{{orderDetail.r_name}} </a></p>
+                  <p>Email:- <span>{{orderDetail.r_email}} </span></p>
+                  <p>Contact:- <span>{{orderDetail.r_contact}} </span></p>
+                  <p>City:- <span>{{orderDetail.r_city}} </span></p>
+                </div>
+                <div class="col-sm-4">
+                  <h4>Payment Status</h4>
+                  <div class="row" #paymentStatusDiv>
+                    <div class="col-sm-12">
+                      <p class="text-success" *ngIf="orderDetail?.payment_status == 1 else payment_incomplete">User has
+                        successfully paid
+                        {{orderDetail?.total | currency}} for this order.
+                      </p>
+                      <ng-template #payment_incomplete>
+                        <p class="text-danger">Payment is remaining for this order</p>
+                      </ng-template>
+                      <div class="custom-control custom-checkbox mb-3" *ngIf="orderDetail?.payment_status != 1">
+                        <input type="checkbox" class="custom-control-input" id="customCheck" name="example1"
+                          (change)="payment_complete()" [(ngModel)]="payment_checkbox">
+                        <label class="custom-control-label" for="customCheck">Got Payment</label>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <h4>Payment mode</h4>
+                  <div class="row" *ngIf="orderDetail.payment_mode != 2">
+                    <div class="col-sm-12" *ngIf="cardLast4 != '' else payFail">
+                      <!-- <p class="text-success">U</p> -->
+                      <span>Card</span>
+                      <p *ngIf="orderDetail.payment_mode == 1"> Payment method :- Stripe</p>
+                      <p *ngIf="orderDetail.payment_mode == 3"> Payment method :- Authorize Net</p>
+                      <p> {{cardLast4}}</p>
+                      <p><b>Transaction Id: </b>{{trans_id}}</p>
+                    </div>
+                    <ng-template #payFail>
+                      <div class="col-sm-12">
+                        <p>Payment Failed</p>
+                        <p class="text-danger">{{paymentError}}</p>
+                      </div>
+                    </ng-template>
+                  </div>
+
+                  <div class="row" *ngIf="orderDetail.payment_mode == 2">
+                    <div class="col-sm-12">
+                      <p> Pay on delivery </p>
+                    </div>
+                  </div>
+
+                  <h4>Delivery mode</h4>
+                  <div class="row">
+                    <div class="col-sm-12">
+
+                      <p *ngIf="orderDetail.delivery_mode == 1"> Home delivery </p>
+                      <p *ngIf="orderDetail.delivery_mode == 2"> Pick up </p>
+
+                    </div>
+
+                  </div>
+
+                  <!-- <h4>Food Prepare Time</h4>
+                  <div class="row" *ngIf="!isAdmin">
+                    <div class="col-sm-6">
+                      <div class="input-group mb-3">
+                        <input type="number" class="form-control" [(ngModel)]="cookingTime">
+                        <div class="input-group-append">
+                          <span class="input-group-text" id="basic-addon2">min</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 pl-0">
+                      <button class="btn btn-decondary" (click)="subCookingTime()">Submit</button>
+                    </div>
+                  </div>
+                  <p *ngIf="isAdmin">{{cookingTime}} min</p> -->
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="order-right-bottom  ">
+          <div class="card">
+            <div class="card-header"> Order Items</div>
+            <div class="card-body">
+              <table class="table  w-100">
+                <thead>
+
+                  <th width="100px">Sr. NO.</th>
+                  <!-- <th>UPC NO.</th> -->
+                  <th>Name</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of Orderitems;  let i = index">
+                    <td>{{i+1}}</td>
+                    <!-- <td>{{item.upc_no}}</td> -->
+                    <td class="cus-tr">
+                      {{item.itemName}}
+                      <!-- <tr *ngFor=" let c of item.customization">
+                    <td>{{c.option_name}}</td>
+                    <td>{{c.option_price | currency}}</td>
+                  </tr> -->
+                      <h5 *ngIf="item.customization && item.customization.length > 0 ">
+                        {{ item.customization | getCus}}
+                      </h5>
+                      <b class="item-note" *ngIf="item.note && item.note != ''">Note :- {{item.note}}</b>
+
+                    </td>
+                    <td> Qty: {{item.quantity}} </td>
+                    <td> {{(item.itemPrice*item.quantity).toFixed(2) | currency}} </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-footer d-flex justify-content-between"><span>Food
+                Tax:</span><span>{{orderDetail.food_tax | currency}}</span></div>
+            <div class="card-footer d-flex justify-content-between"><span>Drink
+                Tax:</span><span>{{orderDetail.drink_tax | currency}}</span></div>
+            <div class="card-footer d-flex justify-content-between"><span>Convenience
+              Fee:</span><span>{{orderDetail.convenience_fee | currency}}</span></div>
+            <div class="card-footer d-flex justify-content-between">
+              <span>Subtotal:</span><span>{{orderDetail.subtotal | currency}}</span></div>
+            <div class="card-footer d-flex justify-content-between"><span>City
+                Tax:</span><span>{{orderDetail.tax | currency}}</span></div>
+            <div class="card-footer d-flex justify-content-between"><span>Total
+                Amount:</span><span>{{orderDetail.without_discount | currency}}</span></div>
+            <div class="card-footer d-flex justify-content-between" *ngIf="orderDetail.discount != 0">
+              <span>Discount:</span><span>- {{orderDetail.discount | currency}}</span></div>
+            <div class="card-footer d-flex justify-content-between"><span>Delivery
+                charges:</span><span>{{orderDetail.delivery_charge | currency}}</span></div>
+            <div class="card-footer d-flex justify-content-between" *ngIf="orderDetail.discount != 0"><span>Total
+                Amount:</span><span>{{orderDetail.total | currency}}</span></div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+
+
+  </div>
+  <div class="col-lg-3">
+    <div class="row" *ngIf="orderDetail.delivery_mode == 1 && orderDetail?.delivered_by == 'driver'">
+
+      <div class="col col-xs-12">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h3>Driver</h3>
+          </div>
+          <div class="card-body" style="overflow-x: scroll;">
+            <div *ngIf="!driverAssigned" style="text-align: center;">
+              <img src="assets/images/searching.gif" alt="">
+              <button class="btn btn-danger pull-left" (click)="stopSearching()">Stop searching</button>
+            </div>
+            <div *ngIf="driverAssigned">
+              <img src="{{fileUrl}}{{driverDetail?.profileimage}}" alt="" width="100px" class="mb-4">
+              <table class="table driverTable">
+                <tr>
+                  <td>Name</td>
+                  <td>{{driverDetail?.name}}</td>
+                </tr>
+                <tr>
+                  <td>Email</td>
+                  <td style="word-break: break-all;">{{driverDetail?.email}}</td>
+                </tr>
+                <tr>
+                  <td>Phone</td>
+                  <td>{{driverDetail?.phone}}</td>
+                </tr>
+                <tr *ngIf="driverDetail?.tip">
+                  <td>Driver Tip</td>
+                  <td>{{ driverDetail?.tip | currency}}</td>
+                </tr>
+                <tr *ngIf="driverDetail?.rating">
+                  <td>Driver Rating</td>
+                  <td>{{ driverDetail?.rating }} / 5</td>
+                </tr>
+              </table>
+
+              <!-- <div *ngIf="driverDetail?.code_verify == 0 ">
+                <h4 class="text-success">Confirm Code</h4>
+                <div class="form-group">
+                  <input type="number" class="form-control" id="code" placeholder="Enter Code" [(ngModel)]="Code">
+                </div>
+                <button type="submit" class="btn btn-success mb-2" (click)="confirmCode()">Confirm</button>
+              </div> -->
+
+              <div *ngIf="driverDetail?.code_verify ==1 && driverDetail?.order_delivered == 0">
+                <p class="text-success" style="font-size: 16px; font-weight: 600;">Code is matched and order is in
+                  process</p>
+              </div>
+              <div *ngIf="driverDetail?.order_delivered == 1">
+                <p class="text-success" style="font-size: 16px; font-weight: 600;">Order is delivered</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col col-xs-12">
+        <div class="card mb-3">
+          <div class="card-header">
+
+          </div>
+          <div class="card-body ">
+            <!-- <div *ngIf="orderDetail.delivery_mode == 2 || orderDetail?.delivered_by != 'driver'">
+              <div *ngIf="!user_code_verified  else verified">
+                <label>User Verification Code (Verify order for right user )</label>
+                <div class="input-group mb-3">
+                  <input type="number" class="form-control" placeholder="Verification Code" #input>
+                  <div class="input-group-append" style="cursor: pointer;">
+                    <span class="input-group-text" id="basic-addon2"
+                      (click)="verify_userCode(input.value)">Verify</span>
+                  </div>
+                </div>
+              </div>
+              <ng-template #verified>
+                <h4 class="text-success">User is verified</h4>
+              </ng-template>
+            </div> -->
+            <div class="form-group">
+              <label>Status:</label>
+              <select class="form-control" [(ngModel)]="orderStatus">
+                <option value="received" *ngIf="AllOrderStatus.includes('received')"> Received</option>
+                <option value="preparing" *ngIf="AllOrderStatus.includes('preparing')">Preparing</option>
+                <option value="ready" *ngIf="AllOrderStatus.includes('ready')">Ready</option>
+                <option value="pickup" *ngIf="AllOrderStatus.includes('pickup') && orderDetail.delivery_mode == 1 ">
+                  Pickup</option>
+                <!-- && orderDetail?.delivered_by == 'driver' -->
+                <option value="delivered" *ngIf="AllOrderStatus.includes('delivered')">Delivered</option>
+                <option value="cancelled" *ngIf="AllOrderStatus.includes('cancelled')">Cancelled</option>
+              </select>
+            </div>
+
+
+            <div class="form-group" *ngIf="orderStatus == 'cancelled' || orderStatus == 'delivered'">
+              <label *ngIf="orderStatus == 'cancelled'">Cancel Reason</label>
+              <label *ngIf="orderStatus == 'delivered'">Order Issue (If have any)</label>
+              <textarea rows="5" class="form-control" [(ngModel)]="orderissue"></textarea>
+            </div>
+
+            <div *ngIf="orderStatus == 'preparing'">
+              <h4>Food Prepare Time</h4>
+              <div class="row" *ngIf="!isAdmin">
+                <div class="col-sm-12">
+                  <div class="input-group mb-3">
+                    <input type="number" class="form-control" [(ngModel)]="cookingTime">
+                    <div class="input-group-append">
+                      <span class="input-group-text" id="basic-addon2">min</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="col-sm-6 pl-0">
+                  <button class="btn btn-decondary" (click)="subCookingTime()">Submit</button>
+                </div> -->
+              </div>
+              <p *ngIf="isAdmin">{{cookingTime}} min</p>
+            </div>
+
+            <div class="form-group">
+              <button class="btn   btn-primary" (click)="changeStatus()" style="width: 100%;">Change</button>
+            </div>
+            <div class="form-group">
+              <app-invoice [(orderDetail)]="orderDetail" *ngIf="orderDetail.id" invoiceby="owner"></app-invoice>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

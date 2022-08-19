@@ -1,0 +1,82 @@
+<div class="row">
+  <div class="col col-xs-12">
+    <div class="card mb-3">
+      <div class="card-header">
+        Promotional Video
+        <!-- <button class="btn btn-success btn-sm pull-right" routerLink="/restaurants/create"> + Add
+          restaurant</button> -->
+      </div>
+      <div class="card-body table-responsive">
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class=" table-hover table-bordered">
+          <thead>
+            <tr>
+              <th width="5%">#</th>
+              <th width="20%">Video</th>
+              <th width="15%">Restaurant Name</th>
+              <th width="15%">Restaurant User</th>
+              <th width="10%"> Start Date</th>
+              <th width="10%"> End Date</th>
+              <th width="5%">Status</th>
+              <th width="10%"> Created Date</th>
+              <!-- <th>Actions</th> -->
+            </tr>
+          </thead>
+          <tbody *ngIf="advertList.length > 0">
+
+            <tr *ngFor="let advert of advertList; index as i;">
+              <td scope="row">{{ i+1 }}</td>
+              <td><img src="{{ pic_url+advert.video_thumb}}" width="100" (click)="openModel(advert.video)"></td>
+              <td><a routerLink="/admin/restaurant/view/{{ advert.restaurant_id}}">{{ advert.restaurant_name}}</a></td>
+              <td><a routerLink="/admin/user/view/{{advert.user_id}}">{{ advert.userName}}</a></td>
+              <td>{{ advert.start_date}}</td>
+              <td>{{ advert.end_date}}</td>
+              <td *ngIf="advert.status == 1; else elseBlock">
+                <ui-switch checked defaultBgColor="red" (change)="changeStatus($event,advert.id)"></ui-switch>
+              </td>
+              <ng-template #elseBlock>
+                <td>
+                  <ui-switch defaultBgColor="red" (change)="changeStatus($event,advert.id)"></ui-switch>
+                </td>
+              </ng-template>
+              <td>{{ advert.created_at}}</td>
+            </tr>
+
+          </tbody>
+
+          <tbody *ngIf="advertList.length == 0">
+            <tr>
+              <td class="no-data-available" colspan="8">No matching records found</td>
+            </tr>
+          </tbody>
+        </table>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+
+        <div class="modal-body">
+
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+
+          <!-- 16:9 aspect ratio -->
+          <div class="embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="" id="video" allowscriptaccess="always"
+              allow="autoplay"></iframe>
+          </div>
+
+
+        </div>
+
+      </div>
+    </div>
+  </div>

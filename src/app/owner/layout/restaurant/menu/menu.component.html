@@ -1,0 +1,558 @@
+<ng-container *ngIf="UserhasRestaurant">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="col-sm-12 mb-2" style="display: flex;" *ngIf="useOtherResmenu">
+        <label class=" ">Use Restaurnt menu &nbsp;</label>
+        <!-- <form class="form-inline"> -->
+        <div class="form-group col-sm-5 pl-0  ">
+          <select class="custom-select" [(ngModel)]="selectedRes">
+            <option value=-1>please select</option>
+            <option value={{item.id}} *ngFor="let item of RestaurantList">{{item.name}}</option>
+          </select>
+        </div>
+        <div>
+          <button type="submit" class="btn btn-primary mb-2" (click)="copymenu()">Copy</button>
+        </div>
+        <!-- </form> -->
+      </div>
+      <div class="col-sm-12" *ngIf="!useOtherResmenu">
+        <button class="btn btn-success mb-2" (click)="usemenu()"> Use Similar menu Restaurant </button>
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <div class="  mb-2">
+        <label style="font-size: 18px; font-weight: bold;"> Upload menu Excel &nbsp;</label>
+        <!-- <button class="cus-btn"><i class="fa fa-upload" aria-hidden="true"></i> &nbsp; Import Excel</button> -->
+        <input type="file" (change)="UploadExcel($event)" accept=".xlsx" #excelInput />
+
+      </div>
+    </div>
+    <div class="col-sm-2" *ngIf="groupList.length > 0">
+      <div class="  mb-2">
+        <label style="font-size: 18px; font-weight: bold;"> Update Quantity Excel &nbsp;</label>
+        <!-- <button class="cus-btn"><i class="fa fa-upload" aria-hidden="true"></i> &nbsp; Import Excel</button> -->
+        <input type="file" (change)="uploadInvQuan($event)" accept=".xlsx" #quaexcelInput />
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <button class="btn btn-danger mr-2 mb-2 " style="padding: 4px 8px;" (click)="deleteallmenu()"><i
+          class="fa fa-trash" aria-hidden="true"></i>&nbsp;
+        Delete All Groups</button>
+    </div>
+    <div class="col-sm-2">
+      <span>Store ID: {{restaurantId}}</span>
+    </div>
+  </div>
+
+</ng-container>
+<div class="row mb-2" *ngIf="UserhasRestaurant">
+  <div class="col-md-4" [style.margin-bottom]="'10px'">
+    <div class="card">
+      <div class="card-header">
+        <b>Group names</b>
+        <button class="btn btn-success btn-sm pull-right" (click)="addgroup()" *ngIf="groupID != -1">+ Add</button>
+      </div>
+      <ul class="list-group list-group-flush" *ngFor="let gl of groupList; index as i">
+        <li class="list-group-item">{{ gl.group_name }}<a href="javascript:void(0)" title="Delete"
+            (click)="deleteGroupbymenu(gl.id)" class="text-danger pull-right"><i class="fa fa-trash"
+              aria-hidden="true"></i>
+          </a> <a href="javascript:void(0)" style="margin-right:10px" title="edit" class="pull-right"
+            (click)="editGroup(gl.id)"><span><i class="fa fa-pencil"></i></span></a> &nbsp; <a href="javascript:void(0)"
+            class="pull-right text-warning" style="margin-right:10px" title="View" (click)="detailGroup(gl.id)"><span><i
+                class="fa fa-eye"></i></span></a>&nbsp; <a href="javascript:void(0)" class="pull-right text-success"
+            style="margin-right:10px" title="customization" (click)="customize(gl.id)"><span><i
+                class="fa fa-plus"></i></span></a>
+          &nbsp;</li>
+      </ul>
+    </div>
+  </div>
+  <ng-container *ngIf="showaddedit">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <b *ngIf="groupID == -1">Add Group</b>
+          <b *ngIf="groupID != -1">Edit Group</b>
+          <a *ngIf="groupID != -1" href="javascript:void(0)" (click)="deleteGroup(groupID)"
+            class="text-danger pull-right"><i class="fa fa-trash" aria-hidden="true"></i> </a>
+        </div>
+        <form role="form" [formGroup]="groupForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+          <div class="row" style="align-items: center;">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="name">Full Name*</label>
+                <input type="text" class="form-control input-underline input-lg" id="name" formControlName="groupname"
+                  placeholder="{{ 'Group Name'  }}" maxlength="25" />
+                <span class="text-danger" *ngIf="
+                                    !groupForm.controls['groupname'].valid &&
+                                    groupForm.controls['groupname'].touched &&
+                                    groupForm.controls['groupname'].hasError('required')
+                                ">Name is required.</span>
+              </div>
+            </div>
+  
+            <div class="col-sm-3">
+              <button type="button" (click)="availableTime()" class="btn btn-primary btn-sm" style="margin-top: 20px;">+ Edit available time </button>
+            </div>
+          </div>
+
+          <div formArrayName="items">
+            <div *ngFor="let item of Items.controls; let i=index" [formGroupName]="i">
+              <input type="hidden" formControlName="item_id">
+              <div class="col-md-12 menus">
+                <span class="menu-items menu-row-del">
+                  <a href="javascript:void(0)" (click)="deleteItem(i)" class="text-danger "><i
+                      class="fa fa-times-circle" aria-hidden="true"></i> </a></span>
+                <div class="row menu-row">
+                  <div class="col-md-4">
+
+                    <div class="form-group">
+                      <label>Item Name*</label>
+                      <input type="text" class="form-control input-underline input-lg" formControlName="name"
+                        placeholder="{{ ' Name'  }}" maxlength="80" />
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label>Price*</label>
+                      <input type="number" class="form-control input-underline input-lg" formControlName="price"
+                        placeholder="{{ 'Price'  }}" maxlength="25" />
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Item Description</label>
+                      <input type="text" class="form-control input-underline input-lg" formControlName="item_des"
+                        placeholder="{{ 'Item Description'  }}" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-3" *ngIf="groupCustomizationOption?.length > 0">
+                    <div class="form-group">
+                      <label>Customization</label>
+                      <angular2-multiselect [data]="groupCustomizationOption" [(ngModel)]="selectedItemCus[i]"
+                        [settings]="dropdownSettings" formControlName="cus">
+                      </angular2-multiselect>
+                    </div>
+                  </div>
+
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label>Tax Type</label>
+                      <select class="form-control" formControlName="taxtype">
+                        <option value="food">Food Tax</option>
+                        <option value="drink">Drink Tax</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Food Tax</label><br>
+                      <input type="checkbox" formControlName="is_food">
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>State Tax</label><br>
+                      <input type="checkbox" formControlName="is_state">
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>City Tax</label><br>
+                      <input type="checkbox" formControlName="is_city">
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Note</label><br>
+                      <input type="checkbox" formControlName="is_note">
+                    </div>
+                  </div>
+
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label>Quantity</label>
+                      <input type="number" class="form-control input-underline input-lg" formControlName="quantity"
+                        placeholder="{{ 'quantity'  }}" maxlength="25" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>UPC No.</label>
+                      <input type="text" class="form-control input-underline input-lg" formControlName="upc_no"
+                        placeholder="{{ 'UPC No.'  }}" maxlength="25" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+
+                      <label>Image</label>
+                      <div class="custom-file">
+                        <input type="hidden" formControlName="itempic">
+
+                        <input type="file" formControlName="pic" class="custom-file-input"
+                          (change)="fileChangeEvent($event,i)" accept="image/*" multiple>
+                        <label class="custom-file-label" for="customFile">Choose file</label>
+                      </div>
+
+
+                      <!-- <input type="text" class="form-control input-underline input-lg" formControlName="quantity"
+                            placeholder="{{ 'Quantity'  }}" maxlength="25" /> -->
+
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <img src={{showItempic[i]}} width="100px" [style.padding]="'10px'">
+                  </div>
+                  
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Show</label><br>
+                      <input type="checkbox" formControlName="is_show">
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <div class="btn-div">
+              <button type="button" (click)="addItems()" class="btn btn-primary btn-sm">+ Add More </button>
+            </div>
+          </div>
+          <div class="btn-div">
+            <button class="btn btn-success " type="submit" [disabled]="!groupForm.valid">
+              Save
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="ShowDetail">
+    <div class="col-md-8">
+      <div class="card detailcard">
+        <div class="card-header">
+          <b>{{detailGroupName  | titlecase}}</b>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-12 menus">
+            <div class="row">
+              <div class="col-md-3">
+                <b> Image </b>
+              </div>
+              <div class="col-md-2">
+                <b>Name</b>
+              </div>
+              <div class="col-md-2">
+                <b>Price</b>
+              </div>
+              <div class="col-md-2">
+                <b>Quantity</b>
+              </div>
+              <div class="col-md-2">
+                <b>Tax Type</b>
+              </div>
+
+            </div>
+          </div>
+          <ng-container *ngFor="let item of detailGroupMenuitems">
+
+            <div class="col-md-12 menus">
+              <div class="row">
+                <div class="col-md-3">
+                  <img src={{itemImagePath}}{{item.item_pic}} width="100px" [style.padding]="'10px'"
+                    *ngIf="item.item_pic != null && item.item_pic != 'null'">
+                </div>
+                <div class="col-md-2">
+                  <p>{{item.item_name}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p>{{item.item_price | currency}}</p>
+                </div>
+                <div class="col-md-2">
+                  <p>{{item.item_quantity }}</p>
+                </div>
+                <div class="col-md-2">
+                  <p>{{item.taxtype }}</p>
+                </div>
+
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="showcoustmization">
+    <div class="col-md-8">
+      <div class="card detailcard">
+        <div class="card-header">
+          <b>{{detailGroupName  | titlecase}}</b>
+        </div>
+        <div class="">
+          <div class="row" style="margin: 15px 0px">
+            <div class="col-sm-4" style="padding-right: 0px;">
+              <div class="card">
+                <div class="card-header">
+                  Customizations
+                  <button class="btn btn-success pull-right" (click)="addCus()">Add +</button>
+                </div>
+                <div class="card-body">
+                  <ul class="list-group list-group-flush" *ngFor="let cs of customizationslist; index as i">
+                    <li class="list-group-item">
+                      {{ cs.name }}
+                      <a href="javascript:void(0)"
+                        (click)="deleteCustomization(cs.id)" class="text-danger pull-right"><i class="fa fa-trash"
+                          aria-hidden="true"></i>
+                      </a> 
+                      <a href="javascript:void(0)" style="margin-right:10px" title="edit" class="pull-right"
+                        (click)="editCustomization(cs.id)"><span><i class="fa fa-pencil"></i></span>
+                      </a>
+                      &nbsp;
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-8">
+              <div class="card">
+                <div class="card-header">
+                  Add Customization
+                </div>
+                <div class="card-body">
+                  <form role="form" [formGroup]="customizationGroup" (ngSubmit)="onSubmitCustomization()"
+                    enctype="multipart/form-data">
+
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="name">Customization Name*</label>
+                          <input type="text" class="form-control input-underline input-lg" formControlName="name"
+                            placeholder="{{ 'Name'  }}" maxlength="25" />
+                          <span class="text-danger" *ngIf="
+                                            !customizationGroup.controls['name'].valid &&
+                                            customizationGroup.controls['name'].touched &&
+                                            customizationGroup.controls['name'].hasError('required')
+                                        ">Name is required.</span>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="name">Max select</label>
+                          <input type="number" class="form-control input-underline input-lg" formControlName="max" min="1"/>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div formArrayName="options">
+                      <div *ngFor="let item of Options.controls; let i=index" [formGroupName]="i">
+                        <input type="hidden" formControlName="itemid">
+                        <div class="col-md-12 menus">
+                          <div class="row">
+                            <span class="menu-items">
+                              <a href="javascript:void(0)" (click)="deleteCustomizeOption(i)" class="text-danger"><i
+                                  class="fa fa-times-circle" aria-hidden="true"></i> </a></span>
+                            <div class="col-md-6">
+
+                              <div class="form-group">
+                                <label>Option Name*</label>
+                                <input type="text" class="form-control input-underline input-lg"
+                                  formControlName="option_name" placeholder="{{ ' Name'  }}" maxlength="80" />
+                              </div>
+                            </div>
+                            <div class="col-md-5">
+                              <div class="form-group">
+                                <label>Option Price*</label>
+                                <input type="number" class="form-control input-underline input-lg"
+                                  formControlName="option_price" placeholder="{{ 'Price'  }}" maxlength="25" />
+
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                      <div class="btn-div">
+                        <button type="button" (click)="addOptions()" class="btn btn-primary btn-sm">+ Add More </button>
+                      </div>
+                    </div>
+                    <div class="btn-div">
+                      <button class="btn btn-success " type="submit" [disabled]="!customizationGroup.valid">
+                        Save
+                      </button>
+                    </div>
+
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+
+
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="openTimeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+
+      <div class="modal-body">
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+
+
+
+
+
+        <!-- 16:9 aspect ratio -->
+        <form class="" id="openTimeForm" [formGroup]="openTimeForm" (ngSubmit)="submitTimeform()">
+          <div class="row">
+            <div class="col-sm-12">
+              <h6>Fill Available and Unavailable time</h6>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              Monday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="monopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="monclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-primary badge" (click)="copyTiming()">same all day</span><br><span
+                class="btn btn-danger badge" (click)="clearTimining('mon')">clear/closed</span>
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="col-2">
+              Tuesday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="tueopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="tueclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-danger badge" (click)="clearTimining('tue')">clear/closed</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              Wednesday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="wedopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="wedclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-danger badge" (click)="clearTimining('wed')">clear/closed</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              Thursday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="thuopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="thuclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-danger badge" (click)="clearTimining('thu')">clear/closed</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              Friday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="friopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="friclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-danger badge" (click)="clearTimining('fri')">clear/closed</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              Saturday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="satopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="satclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-danger badge" (click)="clearTimining('sat')">clear/closed</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              Sunday
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="sunopen_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <input atp-time-picker formControlName="sunclose_time" class="form-control" readonly />
+            </div>
+            <div class="col-3">
+              <span class="btn btn-danger badge" (click)="clearTimining('sun')">clear/closed</span>
+            </div>
+          </div>
+
+          <div class="col-sm-12">
+            <button [disabled]="!openTimeForm.valid " type="submit" class="btn btn-success">Save</button>
+          </div>
+        </form>
+
+
+
+
+
+
+
+
+      </div>
+
+    </div>
+  </div>
+</div>
